@@ -1,3 +1,4 @@
+import ast
 import logging
 from typing import List, Dict, Optional
 from src.processors.claude_processor import ClaudeProcessor
@@ -5,6 +6,13 @@ from src.config import FIRECRAWL_API_KEY
 from firecrawl import FirecrawlApp
 
 logger = logging.getLogger(__name__)
+
+def _parse_case_study_indices(response):
+    indices = ast.literal_eval(response)
+    if not isinstance(indices, (list, tuple)) or any(type(index) is not int for index in indices):
+        raise ValueError("Expected a list of integer case-study indices")
+    return indices
+
 
 class WebsiteCrawler:
     def __init__(self):
@@ -110,12 +118,12 @@ URLs to analyze:
         print(response)
 
         try:
-            case_study_indices = eval(response)  # Safely evaluate the list
+            case_study_indices = _parse_case_study_indices(response)
             
             # Get the identified case study URLs
             case_studies = []
             for i in case_study_indices:
-                if i < len(links):
+                if 0 <= i < len(links):
                     case_studies.append({
                         'url': links[i],
                         'title': self._extract_title_from_url(links[i])

@@ -487,4 +487,4 @@ if __name__ == '__main__':
 
 Press Ctrl+C to stop the server
 """)
-    socketio.run(app, host='0.0.0.0', port=port, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0', port=port, debug=os.getenv('FLASK_DEBUG') == '1', allow_unsafe_werkzeug=True)
